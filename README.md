@@ -6,6 +6,7 @@ This project focuses on using DevSecOps practices to automate the application of
 
 ## Purpose
 The purpose of this project is to demonstrate how automated deployment packages can apply standardized security baselines throughout a defined software development lifecycle in support of secure design practices. The project emphasizes integrating security into DevOps processes rather than a seperate or reactive step.
+
 This includes:
 - Configuration Management
 - System provisioning
@@ -25,15 +26,21 @@ cd ku-capstone
 ```
 3. Check that your local main branch is up to date:
 ```bash
-git checkout main
-git pull origin main
+git switch main
+git pull
 ```
-4. Create a new feature branch or switch to an existing one:
+4. Creating new feature branches and switching branches:
 ```bash
-git checkout -b feature/your-branch-name
+git fetch --prune # remove stale branches
 ```
 ```bash
-git switch feature/existing-branch-name # switching branches
+git branch -r # list remote branches
+```
+```bash
+git switch -c feature/your-branch-name # create a new feature branch
+```
+```bash
+git switch feature/existing-branch-name # switch to existing branch
 ```
 
-### To contribute to this project please see CONTRIBUTING.md
+### To contribute to this project, please see [CONTRIBUTING.md](CONTRIBUTING.md).
