@@ -12,7 +12,7 @@ packer {
 }
 
 
-variable "ssh_password" {
+variable "ssh-password" {
   type    = string
   default = "capstone"
   sensitive = true
@@ -44,11 +44,11 @@ source "virtualbox-iso" "rocky9" {
 
   # SSH Settings for Vagrant
   ssh_username     = "capstone"
-  ssh_password     = var.ssh_password
+  ssh_password     = var.ssh-password
   ssh_timeout      = "30m"
   ssh_wait_timeout = "30m"
 
-  shutdown_command = "echo '${var.ssh_password}' | sudo -S /sbin/halt -h -p"
+  shutdown_command = "echo '${var.ssh-password}' | sudo -S /sbin/halt -h -p"
 
   vboxmanage = [
     ["modifyvm", "{{ .Name }}", "--memory", "4096"],
@@ -76,7 +76,7 @@ build {
   
   post-processors {
     post-processor "vagrant" {
-      output = "rocky-base_v.1.box"
+      output = "rocky-base-v.1.box"
     }
   }
 }

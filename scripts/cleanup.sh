@@ -1,32 +1,31 @@
 #!/bin/bash
 set -e
 
-# 1. Install VirtualBox Guest Additions
+# install VirtualBox Guest Additions (optional - may fail)
 sudo mkdir -p /mnt/virtualbox
 if [ -f /tmp/VBoxGuestAdditions.iso ]; then
-    sudo mount -o loop /tmp/VBoxGuestAdditions.iso /mnt/virtualbox
+    sudo mount -o loop /tmp/VBoxGuestAdditions.iso /mnt/virtualbox || true
     sudo /mnt/virtualbox/VBoxLinuxAdditions.run || true
-    sudo umount /mnt/virtualbox
-    rm -rf /tmp/VBoxGuestAdditions.iso
+    sudo umount /mnt/virtualbox 2>/dev/null || true
+    rm -rf /tmp/VBoxGuestAdditions.iso || true
 else
     echo "VBoxGuestAdditions.iso not found, skipping installation."
 fi
 
-# Disable password authentication for SSH
-sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
-sed -i 's/^PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
-sudo systemctl restart sshd
+# disable password authentication
+sudo sed -i 's/^PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config || true
+sudo systemctl restart sshd || true
 
-# Clean up DNF cache and unused packages
+# clean up DNF cache and unused packages
 sudo dnf clean all
 sudo rm -rf /var/cache/dnf
 
-# Minimize logs
+# minimize logs
 sudo journalctl --vacuum-time=1s
 
-# Zero out the drive to help compression
+# zero out the drive to help compression
 sudo dd if=/dev/zero of=/EMPTY bs=1M || true
 sudo rm -f /EMPTY
 
-# Sync to ensure all writes are complete
+# sync to ensure all writes are complete
 sync
