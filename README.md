@@ -17,7 +17,9 @@ This includes:
    - Auditing
    - Reporting
 
-## Prerequisites
+## Installation
+
+**Required Tools**:
 
 - Git
 - VirtualBox Cli (VBoxManage) >=7.2.x
@@ -25,9 +27,11 @@ This includes:
 - Packer >=1.7.x
 - PowerShell 7 recommended. Windows PowerShell 5.1 supported.
 
-#### *For detailed set up instructions, please see [SETUP.md](SETUP.md).*
-
-## Installation
+**System Requirements:**
+- CPU virtualization enabled in BIOS or UEFI
+- Min 8 GB RAM recommended
+- Min 40 GB free disk space
+- Windows 10/11, macOS, or Linux
 
 **Windows**:
 
@@ -36,6 +40,8 @@ Run all commands from an elevated Windows PowerShell or PowerShell 7 session. It
 **Intel Macs/Linux**:
 
 Install VirtualBox, Vagrant, and Packer using your system package manager and ensure virtualization is enabled.
+
+#### *For detailed set up instructions, please see [SETUP.md](SETUP.md).*
 
 ## Getting started
 Clone the shared repo to your local machine:
