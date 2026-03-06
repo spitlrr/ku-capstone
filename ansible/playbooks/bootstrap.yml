@@ -1,0 +1,12 @@
+# bootstrap for installing baseline tools
+- hosts: all
+  become: true
+  tasks:
+    -  name: install baseline tools
+      dnf:
+        name:
+          - openscap-scanner
+          - scap-security-guide
+          - python3
+          - rsync
+        state: present
