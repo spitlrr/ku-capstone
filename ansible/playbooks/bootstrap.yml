@@ -2,7 +2,7 @@
 - hosts: all
   become: true
   tasks:
-    -  name: install baseline tools
+    - name: install baseline tools
       dnf:
         name:
           - openscap-scanner
