@@ -1,3 +1,47 @@
+# packer artifacts and cache
+*.vdi
+*vmdk
+*.vhdx
+*.img
+*.raw
+*.qcow2
+packer_cache/
+output-*/
+builds/
+packer/*.ova
+packer/*.vdi
+
+# Vagrant artifacts
+.vagrant/
+*.box
+
+# installation media
+*.iso
+packer/iso/*.iso
+
+# vbox exports
+*.ova
+*.ovf
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+Thumbs.db
+
+# ansible runtime
+*.retry
+
+# tmp files
+*.tmp
+*.swp
+*.bak
+*~
+
+# ansible
+ansible/ssh-config
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
