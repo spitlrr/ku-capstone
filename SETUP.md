@@ -1,11 +1,12 @@
-## Environment Setup and Build Instructions
+# Environment Setup and Build Instructions
 
 This guide assumes you have already cloned the repo and are inside the project root directory.
 
 ---
-### 1. Install required tools
 
-#### **Windows Setup**
+## 1. Install required tools
+
+### **Windows Setup**
 
 Run all commands from an elevated Windows PowerShell or PowerShell 7 session. Do not use WSL.
 
@@ -35,7 +36,8 @@ where.exe packer
 If commands are not recognized, close and reopen the shell.
 
 ---
-#### **macOS and Linux Setup**
+
+### **macOS and Linux Setup**
 
 Install required tools using your system package manager.
 
@@ -54,21 +56,21 @@ vagrant --version
 VBoxManage --version
 packer version
 ```
+
 ---
 
-### 2. Building the Base Image
+## 2. Building the Base Image
 
 From the repo root:
+
 ```bash
-git switch main
-git pull
 cd packer
 packer init .
 packer validate .
 packer build rocky.pkr.hcl
 ```
 
-#### **Expected Behavior:**
+### **Expected Behavior:**
 
 - Total build time is typically 25-35 min depending on hardware and network speed. Users can confirm system processes are running by checking running tasks.
 - The inital build process is intended to be fully automated and should not require input from the user.
@@ -76,43 +78,52 @@ packer build rocky.pkr.hcl
 - Once SSH becomes available, Packer completes provisioning.
 - After completion, a .box file will be created in the `packer/` directory.
 
-**Confirm artifact creation:**
+#### **Confirm artifact creation:**
 
 Windows:
+
 ```powershell
 Get-ChildItem *.box
 ```
+
 macOS/Linux:
+
 ```bash
 ls -la *.box
 ```
+
 ---
-### 3. Use the Box with Vagrant
+
+## 3. Use the Box with Vagrant
 
 Return to repo root if needed:
+
 ```bash
 cd ..
 ```
 
-Windows:
+**Windows:**
+
 ```powershell
-vagrant box add --name capstone --provider virtualbox .\packer\rocky-base-v.1.box
+vagrant box add --name rocky-base-v.1 --provider virtualbox .\packer\rocky-base-v.1.box
 cd vagrant
 vagrant up --provider virtualbox
 vagrant ssh
 ```
 
-macOS/Linux:
+**macOS/Linux:**
+
 ```bash
-vagrant box add --name capstone --provider virtualbox ./packer/rocky-base-v.1.box
+vagrant box add --name rocky-base-v.1 --provider virtualbox ./packer/rocky-base-v.1.box
 cd vagrant
 vagrant up --provider virtualbox
 vagrant ssh
 ```
 
 If rebuilding and replacing the local box:
+
 ```bash
-vagrant box add --force --name capstone ./packer/rocky-base-v.1.box
+vagrant box add --force --name rocky-base-v.1 ./packer/rocky-base-v.1.box
 ```
 
 Viewing Available Vagrant Commands:
