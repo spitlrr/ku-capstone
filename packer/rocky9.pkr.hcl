@@ -76,7 +76,7 @@ build {
   
   post-processors {
     post-processor "vagrant" {
-      output = "rocky-base-v.1.box"
+      output = "rocky-base-v.2.box"
     }
   }
 }
