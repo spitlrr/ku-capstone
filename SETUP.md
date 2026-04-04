@@ -67,7 +67,7 @@ From the repo root:
 cd packer
 packer init .
 packer validate .
-packer build rocky.pkr.hcl
+packer build rocky9.pkr.hcl
 ```
 
 ### **Expected Behavior:**
