@@ -105,7 +105,7 @@ cd ..
 **Windows:**
 
 ```powershell
-vagrant box add --name rocky-base-v.1 --provider virtualbox .\packer\rocky-base-v.1.box
+vagrant box add --name rocky-base-v.2 --provider virtualbox .\packer\rocky-base-v.2.box
 cd vagrant
 vagrant up --provider virtualbox
 vagrant ssh
@@ -114,7 +114,7 @@ vagrant ssh
 **macOS/Linux:**
 
 ```bash
-vagrant box add --name rocky-base-v.1 --provider virtualbox ./packer/rocky-base-v.1.box
+vagrant box add --name rocky-base-v.2 --provider virtualbox ./packer/rocky-base-v.2.box
 cd vagrant
 vagrant up --provider virtualbox
 vagrant ssh
@@ -123,7 +123,7 @@ vagrant ssh
 If rebuilding and replacing the local box:
 
 ```bash
-vagrant box add --force --name rocky-base-v.1 ./packer/rocky-base-v.1.box
+vagrant box add --force --name rocky-base-v.2 ./packer/rocky-base-v.2.box
 ```
 
 Viewing Available Vagrant Commands:
