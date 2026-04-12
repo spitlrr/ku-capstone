@@ -20,7 +20,7 @@ variable "ssh-password" {
 }
 # Official Rocky 9.7 Minimal ISO
 source "virtualbox-iso" "rocky9" {
-  vm_name          = "rocky-base"
+  vm_name          = "rocky-base-v2.1"
   output_directory = "output-rocky9"
 
   iso_url      = "https://download.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-9.7-x86_64-minimal.iso"
@@ -76,7 +76,7 @@ build {
   
   post-processors {
     post-processor "vagrant" {
-      output = "rocky-base-v.1.box"
+      output = "rocky-base-v2.1.box"
     }
   }
 }
