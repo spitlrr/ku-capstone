@@ -1,7 +1,13 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "rocky9-hardened"
+  config.vm.guest = :redhat
   config.ssh.username = "capstone"
+  # Guest 22 is the standard SSH port inside the VM
+  # Host 2222 is what you want to use on Windows
+  # auto_correct: false prevents the jump to 2200
+  config.vm.network "forwarded_port", guest: 22, host: 2222, id: "ssh", auto_correct: false
   config.ssh.insert_key = false
+  config.ssh.private_key_path = File.expand_path("~/.ssh/spitlrr")
   config.vm.synced_folder ".", "/vagrant", disabled: true
 
   config.vm.provider "virtualbox" do |vb|
