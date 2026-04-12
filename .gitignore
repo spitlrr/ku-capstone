@@ -249,3 +249,9 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Public Keys
+# Exclude public keys from version control to prevent accidental exposure.
+ansible/files/public_keys/*
+# But do not ignore the directory's placeholder file, which is needed to keep the directory in version control.
+!ansible/files/public_keys/.gitkeep
