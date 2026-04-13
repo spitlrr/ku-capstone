@@ -57,10 +57,10 @@ reboot
 
 %post --log=/root/ks-post.log
 # Update the system and enable necessary services
-dnf update -y
-dnf upgrade -y
+sudo dnf update -y
+sudo dnf upgrade -y
 systemctl enable NetworkManager
-systemctl enable sshd
+#systemctl enable sshd
 
 # create .ssh directory
 mkdir -p /home/vagrant/.ssh
