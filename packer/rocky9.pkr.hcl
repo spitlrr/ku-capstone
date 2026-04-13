@@ -26,7 +26,11 @@ source "virtualbox-iso" "rocky9" {
   iso_url      = "https://download.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-9.7-x86_64-minimal.iso"
   iso_checksum = "sha256:23a1ac1175d8ccada7195863914ef1237f584ff25f73bd53da410d5fffd882b0"
 
-  http_directory = "${path.root}/http"
+  http_content = {
+    "/ks.cfg" = templatefile("${path.root}/http/ks.cfg.pkrtpl", {
+      ssh_password = var.ssh-password
+    })
+  }
   guest_os_type  = "RedHat_64"
   headless       = false
 
@@ -37,13 +41,12 @@ source "virtualbox-iso" "rocky9" {
     "<tab><wait>",
     " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>"
   ]
-
   # VirtualBox Guest Additions
   guest_additions_mode = "upload"
   guest_additions_path = "/tmp/VBoxGuestAdditions.iso"
 
   # SSH Settings for Vagrant
-  ssh_username     = "capstone"
+  ssh_username     = "vagrant"
   ssh_password     = var.ssh-password
   ssh_timeout      = "30m"
   ssh_wait_timeout = "30m"

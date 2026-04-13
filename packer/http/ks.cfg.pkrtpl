@@ -1,0 +1,96 @@
+# Kickstart file for Rocky Linux 9 minimal installation
+# network installation
+url --url=http://dl.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/
+repo --name="AppStream" --baseurl=http://dl.rockylinux.org/pub/rocky/9/AppStream/x86_64/os/
+
+# use text mode install
+text
+# keyboard and language
+keyboard us
+lang en_US.UTF-8
+
+# network information
+network --bootproto=dhcp --device=link --onboot=true --activate --hostname=rocky-base
+
+# disable root account
+rootpw --lock
+
+# add user and groups
+user --name=vagrant  --password=${ssh_password}  --plaintext --groups=wheel
+user --name=capstone --password=${ssh_password} --plaintext --groups=wheel
+
+
+# system services
+selinux --enforcing
+firewall --enabled --service=ssh
+services --enabled="NetworkManager,sshd"
+
+# timezone
+timezone America/Chicago --utc
+
+# bootloader and partitioning
+bootloader --location=mbr --boot-drive=sda
+ignoredisk --only-use=sda
+zerombr
+clearpart --all --initlabel --disklabel=msdos
+part swap --size=1024
+part /boot --fstype="xfs" --size=512
+part pv.01 --grow --size=1
+volgroup vg_root pv.01
+logvol / --fstype="xfs" --name=lv_root --vgname=vg_root --size=1 --grow
+
+# packages
+%packages --ignoremissing
+@^minimal-environment
+-iwl*firmware
+openssh-server
+openssh-clients
+NetworkManager
+xfsprogs
+openscap-scanner
+scap-security-guide
+python3
+rsync
+%end
+
+reboot
+
+%post --log=/root/ks-post.log
+# Update the system and enable necessary services
+dnf update -y
+dnf upgrade -y
+systemctl enable NetworkManager
+systemctl enable sshd
+
+# create .ssh directory
+mkdir -p /home/vagrant/.ssh
+chown -R vagrant:vagrant /home/vagrant/.ssh
+chmod 700 /home/vagrant/.ssh
+
+# add vagrant's standard insecure public key to the authorized_keys file
+cat > /home/vagrant/.ssh/authorized_keys <<'EOF'
+ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key
+EOF
+
+# set permissions for the authorized_keys file
+chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys
+chmod 600 /home/vagrant/.ssh/authorized_keys
+
+# enable password authentication for Packer to connect (disabled later in cleanup.sh)
+sed -ri 's/^\s*#?\s*PasswordAuthentication\s+.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+grep -q '^PasswordAuthentication' /etc/ssh/sshd_config || echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
+
+#sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+#sed -i 's/^#PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+#echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
+
+# allow passwordless sudo for user
+echo "vagrant ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vagrant
+echo "capstone ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/capstone
+chmod 0440 /etc/sudoers.d/vagrant
+chmod 0440 /etc/sudoers.d/capstone
+
+restorecon -Rv /home/vagrant/.ssh || true
+systemctl restart sshd
+
+%end

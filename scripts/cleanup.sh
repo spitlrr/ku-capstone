@@ -1,20 +1,20 @@
 #!/bin/bash
 set -e
 
-# install VirtualBox Guest Additions (optional - may fail)
-sudo mkdir -p /mnt/virtualbox
-if [ -f /tmp/VBoxGuestAdditions.iso ]; then
-    sudo mount -o loop /tmp/VBoxGuestAdditions.iso /mnt/virtualbox || true
-    sudo /mnt/virtualbox/VBoxLinuxAdditions.run || true
-    sudo umount /mnt/virtualbox 2>/dev/null || true
-    rm -rf /tmp/VBoxGuestAdditions.iso || true
-else
-    echo "VBoxGuestAdditions.iso not found, skipping installation."
-fi
+#install VirtualBox Guest Additions (optional - may fail)
+# sudo mkdir -p /mnt/virtualbox
+# if [ -f /tmp/VBoxGuestAdditions.iso ]; then
+    # sudo mount -o loop /tmp/VBoxGuestAdditions.iso /mnt/virtualbox || true
+    # sudo /mnt/virtualbox/VBoxLinuxAdditions.run || true
+    # sudo umount /mnt/virtualbox 2>/dev/null || true
+#   rm -rf /tmp/VBoxGuestAdditions.iso || true
+#else
+#    echo "VBoxGuestAdditions.iso not found, skipping installation."
+#fi
 
 # disable password authentication
-sudo sed -i 's/^PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config || true
-sudo systemctl restart sshd || true
+#sudo sed -i 's/^PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config || true
+#sudo systemctl restart sshd || true
 
 # clean up DNF cache and unused packages
 sudo dnf clean all

@@ -10,6 +10,7 @@ output-*/
 builds/
 packer/*.ova
 packer/*.vdi
+packer/local.auto.pkrvars.hcl
 
 # Vagrant artifacts
 .vagrant/
