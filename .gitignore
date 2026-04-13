@@ -15,7 +15,7 @@ packer/local.auto.pkrvars.hcl
 # Vagrant artifacts
 .vagrant/
 *.box
-
+vagrant/ssh-config
 # installation media
 *.iso
 packer/iso/*.iso
