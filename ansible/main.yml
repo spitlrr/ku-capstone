@@ -1,0 +1,4 @@
+---
+# This is the main playbook for Ansible. It includes all the roles and tasks that need to be executed on the target machines.
+- import_playbook: hardening.yml
+- import_playbook: access.yml
