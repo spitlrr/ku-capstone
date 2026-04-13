@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
+# from repo root run ./scripts/bootstrap-ansible.sh
 cd vagrant
 vagrant up
-vagrant ssh-config > ../ansible/ssh_config
+vagrant ssh-config > ../ansible/ssh-config
 cd ..
 
 cd ansible
