@@ -1,0 +1,34 @@
+---
+### This playbook is used to automate uploading public keys for SSH access to the servers.
+- name: Automate Public Key Upload for SSH Access
+  hosts: all
+  become: yes
+  vars:
+    # Define the relative path to the public keys directory
+    public_keys_dir: "files/public_keys"
+
+
+  tasks:
+    - name: Ensure .ssh directory exists with correct permissions
+      file:
+        path: "/home/{{ ansible_user }}/.ssh"
+        state: directory
+        mode: '0700'
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+
+    - name: Deploy team public keys
+      ansible.posix.authorized_key:
+        user: "capstone"
+        state: present
+        # This loops through every .pub file in your directory
+        key: "{{ lookup('file', item) }}"
+      with_fileglob:
+        - "{{ public_keys_dir }}/*.pub"
+
+    - name: Final CIS Permission Enforcement
+      file:
+        path: "/home/capstone/.ssh/authorized_keys"
+        mode: '0600'
+        owner: "capstone"
+        group: "capstone"
