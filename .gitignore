@@ -14,6 +14,13 @@ packer/*.vdi
 # Vagrant artifacts
 .vagrant/
 *.box
+vagrant/results/*
+
+# generated reports to show for final project results and workflow
+reports/*
+!reports/.gitkeep
+!reports/initial-hardened-compliance-report.html
+!reports/initial-baseline-scan-results.html
 
 # installation media
 *.iso
