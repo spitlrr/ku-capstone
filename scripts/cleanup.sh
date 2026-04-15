@@ -13,20 +13,20 @@ set -euo pipefail
 # fi
 
 # disable password authentication
-sed -ri 's/^\s*#?\s*PasswordAuthentication\s+.*/PasswordAuthentication no/' /etc/ssh/sshd_config
-grep -q '^PasswordAuthentication' /etc/ssh/sshd_config || echo 'PasswordAuthentication no' >> /etc/ssh/sshd_config
-systemctl restart sshd
+sudo sed -ri 's/^\s*#?\s*PasswordAuthentication\s+.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+sudo grep -q '^PasswordAuthentication' /etc/ssh/sshd_config || echo 'PasswordAuthentication no' | sudo tee -a /etc/ssh/sshd_config >/dev/null
+sudo systemctl restart sshd
 
 # clean up DNF cache and unused packages
-dnf clean all
-rm -rf /var/cache/dnf
+sudo dnf clean all
+sudo rm -rf /var/cache/dnf
 
 # minimize logs
-journalctl --vacuum-time=1s
+sudo journalctl --vacuum-time=1s
 
 # zero out the drive to help compression
-dd if=/dev/zero of=/EMPTY bs=1M || true
-rm -f /EMPTY
+sudo dd if=/dev/zero of=/EMPTY bs=1M || true
+sudo rm -f /EMPTY
 
 # sync to ensure all writes are complete
 sync

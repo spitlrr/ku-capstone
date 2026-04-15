@@ -38,7 +38,7 @@ bring_up_vm() {
 
 login_capstone() {
     cd "$VAGRANT_DIR"
-    vagrant ssh-config > ssh_config
+    vagrant ssh-config > ssh-config
     ssh -t -F ssh-config default "sudo -iu capstone bash -l"
 }
 
