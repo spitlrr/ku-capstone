@@ -1,11 +1,11 @@
 packer {
   required_plugins {
     virtualbox = {
-      version = " >=1.1.0"
+      version = ">= 1.1.0"
       source  = "github.com/hashicorp/virtualbox"
     }
     vagrant = {
-      version = " >=1.1.0"
+      version = ">= 1.1.0"
       source  = "github.com/hashicorp/vagrant"
     }
   }
@@ -13,9 +13,9 @@ packer {
 
 
 variable "ssh-password" {
-  type    = string
-  default = "capstone"
-  sensitive = true
+  type        = string
+  default     = "capstone"
+  sensitive   = true
   description = "temp password for packer to connect during builds"
 }
 # Official Rocky 9.7 Minimal ISO
@@ -31,8 +31,8 @@ source "virtualbox-iso" "rocky9" {
       ssh_password = var.ssh-password
     })
   }
-  guest_os_type  = "RedHat_64"
-  headless       = false
+  guest_os_type = "RedHat_64"
+  headless      = false
 
   # Boot command for RHEL 9.x
   boot_wait = "10s"
@@ -73,10 +73,10 @@ build {
   sources = ["source.virtualbox-iso.rocky9"]
 
   # Runs the script below to install Guest Additions
-    provisioner "shell" {
-      script = "${path.root}/../scripts/cleanup.sh"
-    }
-  
+  provisioner "shell" {
+    script = "${path.root}/../scripts/cleanup.sh"
+  }
+
   post-processors {
     post-processor "vagrant" {
       output = "rocky-base-v2.1.box"
