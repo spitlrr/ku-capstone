@@ -1,30 +1,33 @@
 ---
 ### This playbook is used to automate uploading public keys for SSH access to the servers.
-- name: Automate Public Key Upload for SSH Access
+- name: Managed SSH Access via GitHub Profiles
   hosts: all
   become: yes
   vars:
-    # Define the relative path to the public keys directory
-    public_keys_dir: "files/public_keys"
-
+    # Define team's GitHub usernames here
+    github_users:
+      - spitlrr
+      - bavila-490
+      - JMVilla6
+      - Katomic0
+      - lillypadu
 
   tasks:
     - name: Ensure .ssh directory exists with correct permissions
       file:
-        path: "/home/{{ ansible_user }}/.ssh"
+        path: "/home/capstone/.ssh"
         state: directory
         mode: '0700'
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
+        owner: "capstone"
+        group: "capstone"
 
-    - name: Deploy team public keys
+    - name: Deploy team public keys directly from GitHub
       ansible.posix.authorized_key:
         user: "capstone"
         state: present
-        # This loops through every .pub file in your directory
-        key: "{{ lookup('file', item) }}"
-      with_fileglob:
-        - "{{ public_keys_dir }}/*.pub"
+        # Ansible automatically makes the HTTPS GET request to GitHub
+        key: "https://github.com/{{ item }}.keys"
+      loop: "{{ github_users }}"
 
     - name: Final CIS Permission Enforcement
       file:
