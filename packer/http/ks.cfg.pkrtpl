@@ -1,7 +1,7 @@
 # Kickstart file for Rocky Linux 9 minimal installation
 # network installation
-url --url=http://dl.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/
-repo --name="AppStream" --baseurl=http://dl.rockylinux.org/pub/rocky/9/AppStream/x86_64/os/
+url --url=http://dl.rockylinux.org/vault/rocky/9.6/BaseOS/x86_64/os/
+repo --name="AppStream" --baseurl=http://dl.rockylinux.org/vault/rocky/9.6/AppStream/x86_64/os/
 
 # use text mode install
 text
@@ -56,11 +56,9 @@ rsync
 reboot
 
 %post --log=/root/ks-post.log
-# Update the system and enable necessary services
-sudo dnf update -y
-sudo dnf upgrade -y
+# enable necessary services
 systemctl enable NetworkManager
-#systemctl enable sshd
+systemctl enable sshd
 
 # create .ssh directory
 mkdir -p /home/vagrant/.ssh
