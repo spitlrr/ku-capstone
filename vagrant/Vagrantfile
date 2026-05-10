@@ -1,13 +1,17 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "rocky-base-v2.1"
+  
+  # Login as vagrant user first
   config.ssh.username = "vagrant"
   config.ssh.insert_key = false
+  
+  # This matches your Packer setting for a cleaner environment
   config.vm.synced_folder ".", "/vagrant", disabled: true
 
   config.vm.provider "virtualbox" do |vb|
     vb.memory = 4096
     vb.cpus = 2
-  
+    vb.customize ["modifyvm", :id, "--paravirtprovider", "kvm"]
   end
 end
 # -*- mode: ruby -*-
