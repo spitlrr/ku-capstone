@@ -11,24 +11,17 @@ packer {
   }
 }
 
-
-variable "ssh-password" {
-  type        = string
-  default     = "capstone"
-  sensitive   = true
-  description = "temp password for packer to connect during builds"
-}
-# Official Rocky 9.7 Minimal ISO
+# Official Rocky 9.6 Minimal ISO
 source "virtualbox-iso" "rocky9" {
   vm_name          = "rocky-base-v2.1"
   output_directory = "output-rocky9"
 
-  iso_url      = "https://download.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-9.7-x86_64-minimal.iso"
-  iso_checksum = "sha256:23a1ac1175d8ccada7195863914ef1237f584ff25f73bd53da410d5fffd882b0"
+  iso_url      = "https://dl.rockylinux.org/vault/rocky/9.6/isos/x86_64/Rocky-9.6-x86_64-minimal.iso"
+  iso_checksum = "sha256:aed9449cf79eb2d1c365f4f2561f923a80451b3e8fdbf595889b4cf0ac6c58b8"
 
   http_content = {
     "/ks.cfg" = templatefile("${path.root}/http/ks.cfg.pkrtpl", {
-      ssh_password = var.ssh-password
+      ssh_public_key = build.SSHPublicKey
     })
   }
   guest_os_type = "RedHat_64"
@@ -39,19 +32,19 @@ source "virtualbox-iso" "rocky9" {
   boot_command = [
     "<wait10>",
     "<tab><wait>",
-    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter>"
+    " inst.text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg inst.resolution=1024x768<enter>"
   ]
   # VirtualBox Guest Additions
   guest_additions_mode = "upload"
   guest_additions_path = "/tmp/VBoxGuestAdditions.iso"
 
   # SSH Settings for Vagrant
-  ssh_username     = "vagrant"
-  ssh_password     = var.ssh-password
+  ssh_username     = "capstone"
   ssh_timeout      = "30m"
   ssh_wait_timeout = "30m"
+  ssh_clear_authorized_keys = true # clean up ephemeral keys after build
 
-  shutdown_command = "echo '${var.ssh-password}' | sudo -S /sbin/halt -h -p"
+  shutdown_command = "sudo /sbin/halt -h -p"
 
   vboxmanage = [
     ["modifyvm", "{{ .Name }}", "--memory", "4096"],

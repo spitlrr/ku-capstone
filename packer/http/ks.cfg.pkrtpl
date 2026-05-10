@@ -12,12 +12,12 @@ lang en_US.UTF-8
 # network information
 network --bootproto=dhcp --device=link --onboot=true --activate --hostname=rocky-base
 
-# disable root account
+# disable root account for security
 rootpw --lock
 
 # add user and groups
-user --name=vagrant  --password=${ssh_password}  --plaintext --groups=wheel
-user --name=capstone --password=${ssh_password} --plaintext --groups=wheel
+user --name=vagrant  --plaintext --groups=wheel
+user --name=capstone --plaintext --groups=wheel
 
 
 # system services
@@ -61,33 +61,39 @@ systemctl enable NetworkManager
 systemctl enable sshd
 
 # create .ssh directory
+mkdir -p /home/capstone/.ssh
+chmod 700 /home/capstone/.ssh
+
+# inject dynamic key fromp packer
+cat > /home/capstone/.ssh/authorized_keys <<'EOF'
+${ssh_public_key}
+EOF
+
+# set permissions for the authorized_keys file
 mkdir -p /home/vagrant/.ssh
-chown -R vagrant:vagrant /home/vagrant/.ssh
+
 chmod 700 /home/vagrant/.ssh
 
-# add vagrant's standard insecure public key to the authorized_keys file
+
 cat > /home/vagrant/.ssh/authorized_keys <<'EOF'
 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key
 EOF
 
-# set permissions for the authorized_keys file
-chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys
+chown -R capstone:capstone /home/capstone/.ssh
+chown -R vagrant:vagrant /home/vagrant/.ssh
+chmod 600 /home/capstone/.ssh/authorized_keys
 chmod 600 /home/vagrant/.ssh/authorized_keys
 
-# enable password authentication for Packer to connect (disabled later in cleanup.sh)
-sed -ri 's/^\s*#?\s*PasswordAuthentication\s+.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
-grep -q '^PasswordAuthentication' /etc/ssh/sshd_config || echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
-
-#sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
-#sed -i 's/^#PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
-#echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
+# enable password authentication for Packer to connect-disabled later in cleanup script
+sed -ri 's/^\s*#?\s*PasswordAuthentication\s+.*/PasswordAuthentication no/' /etc/ssh/sshd_config
+sed -ri 's/^\s*#?\s*PubkeyAuthentication\s+.*/PubkeyAuthentication yes/' /etc/ssh/sshd_config
 
 # allow passwordless sudo for user
 echo "vagrant ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vagrant
-echo "capstone ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/capstone
-chmod 0440 /etc/sudoers.d/vagrant
-chmod 0440 /etc/sudoers.d/capstone
+echo "capstone ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/capstone
+chmod 0440 /etc/sudoers.d/vagrant /etc/sudoers.d/capstone
 
+restorecon -Rv /home/capstone/.ssh || true
 restorecon -Rv /home/vagrant/.ssh || true
 systemctl restart sshd
 

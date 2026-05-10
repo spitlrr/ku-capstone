@@ -1,32 +1,42 @@
 #!/bin/bash
 set -euo pipefail
 
-# install VirtualBox Guest Additions (optional - may fail)
-# sudo mkdir -p /mnt/virtualbox
-# if [ -f /tmp/VBoxGuestAdditions.iso ]; then
-#   sudo mount -o loop /tmp/VBoxGuestAdditions.iso /mnt/virtualbox || true
-#   sudo /mnt/virtualbox/VBoxLinuxAdditions.run || true
-#   sudo umount /mnt/virtualbox 2>/dev/null || true
-#   rm -rf /tmp/VBoxGuestAdditions.iso || true
-# else
-#   echo "VBoxGuestAdditions.iso not found, skipping installation."
-# fi
+# 1. Install VirtualBox Guest Additions 
+# (Necessary since your pkr.hcl is already uploading this)
+sudo mkdir -p /mnt/virtualbox
+if [ -f /tmp/VBoxGuestAdditions.iso ]; then
+  # Install dependencies for Guest Additions
+  sudo dnf install -y kernel-devel-$(uname -r) kernel-headers gcc make perl elfutils-libelf-devel
+  sudo mount -o loop /tmp/VBoxGuestAdditions.iso /mnt/virtualbox
+  sudo /mnt/virtualbox/VBoxLinuxAdditions.run || true
+  sudo umount /mnt/virtualbox
+  rm -f /tmp/VBoxGuestAdditions.iso
+else
+  echo "VBoxGuestAdditions.iso not found, skipping."
+fi
 
-# disable password authentication
+# 2. Cleanup Ephemeral Keys
+# Removes the temporary Packer key while leaving the standard Vagrant key intact
+if [ -f /home/capstone/.ssh/authorized_keys ]; then
+  sudo rm -f /home/capstone/.ssh/authorized_keys
+fi
+
+# 3. Final SSH Lockdown
 sudo sed -ri 's/^\s*#?\s*PasswordAuthentication\s+.*/PasswordAuthentication no/' /etc/ssh/sshd_config
-sudo grep -q '^PasswordAuthentication' /etc/ssh/sshd_config || echo 'PasswordAuthentication no' | sudo tee -a /etc/ssh/sshd_config >/dev/null
+
 sudo systemctl restart sshd
 
-# clean up DNF cache and unused packages
+# 4. Storage Optimization
 sudo dnf clean all
 sudo rm -rf /var/cache/dnf
 
-# minimize logs
+
 sudo journalctl --vacuum-time=1s
 
-# zero out the drive to help compression
+# 5. Zero out the drive for better Vagrant box compression
+echo "Zeroing device to optimize compression (this may take a minute)..."
 sudo dd if=/dev/zero of=/EMPTY bs=1M || true
 sudo rm -f /EMPTY
 
-# sync to ensure all writes are complete
+
 sync
